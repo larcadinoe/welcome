@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L'Arca di Noè - Sorrento Guest Experience</title>
+    
+    <!-- Framework & Librerie -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Configurazione tema Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        stone: { 50: '#fcfaf7', 100: '#f3f0eb', 200: '#e5e0d8', 800: '#1c1917', 900: '#0c0a09' },
+                        amber: { 100: '#fef3c7', 700: '#92400e', 800: '#78350f', 900: '#451a03' },
+                        whatsapp: '#25D366'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #fcfaf7; color: #1c1917; -webkit-tap-highlight-color: transparent; }
+        .view-transition { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .hidden-view { opacity: 0; pointer-events: none; transform: translateY(15px); display: none; }
+        .active-view { opacity: 1; pointer-events: auto; transform: translateY(0); display: block; }
+        .menu-card { 
+            border: 1px solid #e5e0d8; 
+            background: #ffffff;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        .menu-card:active { transform: scale(0.95); background: #fef3c7; }
+        h1, h2 { font-family: 'Georgia', serif; }
+        
+        .map-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background-color: #f3f0eb;
+            color: #78350f;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.70rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            border: 1px solid #e5e0d8;
+        }
+
+        .whatsapp-partner-link {
+            display: block;
+            background-color: #25D366;
+            color: #ffffff;
+            text-align: center;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 800;
+            margin-top: 10px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 6px -1px rgba(37, 211, 102, 0.2);
+            transition: all 0.2s ease;
+        }
+        .whatsapp-partner-link:active { transform: scale(0.98); }
+
+        .whatsapp-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background-color: #25D366;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-left: 4px;
+            box-shadow: 0 2px 4px rgba(37, 211, 102, 0.2);
+        }
+
+        .partner-link {
+            display: block;
+            background-color: #78350f;
+            color: #ffffff;
+            text-align: center;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 800;
+            margin-top: 10px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+        .partner-link:active { transform: scale(0.98); }
+
+        .google-map-iframe {
+            width: 100%;
+            height: 350px;
+            border-radius: 1.5rem;
+            border: 2px solid #e5e0d8;
+            margin-top: 1rem;
+        }
+
+        @keyframes pulse-music {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); color: #92400e; }
+            100% { transform: scale(1); }
+        }
+        .music-active { animation: pulse-music 2s infinite ease-in-out; }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col items-center p-3 sm:p-6">
+
+    <!-- Audio Player - Enrico Caruso: Torna a Surriento -->
+    <audio id="bg-music" loop preload="auto">
+        <source src="https://ia800201.us.archive.org/21/items/78_torna-a-surriento-come-back-to-sorrento_enrico-caruso-ernesto-de-curtis_gbia0011502b/01%20-%20Torna%20a%20Surriento%20%28Come%20Back%20To%20Sorrento%29.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="w-full max-w-md bg-white rounded-[2.5rem] shadow-2xl border border-stone-200 overflow-hidden relative min-h-[92vh] flex flex-col">
+        
+        <!-- HEADER -->
+        <header class="pt-8 pb-4 px-6 flex flex-col items-center text-center bg-white z-10 border-b border-stone-50">
+            <div class="mb-4 relative">
+                <div class="w-40 h-44 flex items-center justify-center overflow-hidden">
+                    <img id="main-logo" 
+                         src="logo senza sfondo.png" 
+                         alt="Logo L'Arca di Noè" 
+                         class="w-full h-full object-contain"
+                         onerror="this.style.display='none'; document.getElementById('logo-fallback').style.display='flex';">
+                    
+                    <div id="logo-fallback" class="hidden flex-col items-center text-amber-800 opacity-20">
+                        <i class="fas fa-ship text-6xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex flex-col items-center -mt-2">
+                <span class="text-[11px] text-amber-800 font-black uppercase tracking-[0.4em]">Sorrento</span>
+                <h1 class="text-3xl font-black text-stone-900 tracking-tighter" style="line-height: 1;">L'Arca di Noè</h1>
+            </div>
+            
+            <div class="flex gap-2 mt-5">
+                <!-- Toggle Musica -->
+                <button id="music-toggle" class="flex items-center justify-center w-10 h-10 bg-stone-100 rounded-full text-stone-900 hover:bg-stone-200 transition-all shadow-md">
+                    <i id="music-icon" class="fas fa-music"></i>
+                </button>
+
+                <!-- Toggle Lingua -->
+                <button id="lang-toggle" class="flex items-center gap-2 px-6 py-2 bg-stone-900 rounded-full text-[10px] font-black hover:bg-stone-800 transition-colors text-white shadow-lg uppercase tracking-wider">
+                    <i class="fas fa-globe"></i>
+                    <span id="lang-text">ENGLISH</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- DASHBOARD -->
+        <main id="dashboard-view" class="flex-1 p-5 active-view view-transition overflow-y-auto bg-stone-50">
+            <div class="grid grid-cols-3 gap-3" id="menu-grid"></div>
+            <p class="text-center text-stone-400 text-[9px] mt-6 font-bold uppercase tracking-widest" id="ui-title">Benvenuti a Bordo!</p>
+        </main>
+
+        <!-- VISTA DETTAGLIO -->
+        <section id="detail-view" class="flex-1 p-8 hidden-view view-transition absolute inset-0 z-20 bg-white overflow-y-auto flex flex-col">
+            <button id="back-btn" class="self-start mb-6 flex items-center gap-2 text-stone-900 hover:text-amber-800 transition-colors font-black text-xs uppercase tracking-widest">
+                <i class="fas fa-chevron-left"></i>
+                <span id="ui-back">Indietro</span>
+            </button>
+            
+            <div class="flex items-center gap-4 mb-8">
+                <div id="detail-icon" class="text-3xl text-amber-800 bg-amber-50 p-4 rounded-3xl"></div>
+                <h2 id="detail-title" class="text-3xl font-black text-stone-900 leading-tight"></h2>
+            </div>
+            
+            <div id="section-intro" class="text-stone-500 text-sm italic mb-6 border-l-2 border-amber-200 pl-4"></div>
+
+            <div id="detail-content" class="text-stone-800 leading-relaxed space-y-4 text-base font-medium"></div>
+
+            <div id="map-container" class="hidden">
+                <iframe 
+                    class="google-map-iframe"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3027.69707172828!2d14.3807213!3d40.622543!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x133b99435f377505%3A0xc33e1644917a256!2sVia%20Atigliana%2C%2019%2C%2080067%20Sorrento%20NA!5e0!3m2!1sit!2sit!4v1710599000000!5m2!1sit!2sit" 
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+
+            <div id="qr-container" class="mt-6 hidden flex flex-col items-center border-t border-stone-100 pt-6">
+                <p class="text-[10px] text-stone-400 uppercase font-bold mb-2">Inquadra per connetterti</p>
+                <div class="p-2 border-2 border-amber-100 rounded-2xl bg-white shadow-sm overflow-hidden">
+                    <img id="wifi-qr" src="wi-fi.jpg" alt="QR Code Wi-Fi" class="w-48 h-48 object-contain">
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="p-4 bg-white border-t border-stone-100 text-center text-stone-900 text-[10px] font-black uppercase tracking-wider">
+            <div class="flex items-center justify-center gap-2">
+                <i class="fas fa-map-marker-alt text-amber-800"></i>
+                <span>Via Atigliana, 19 - Sorrento (NA)</span>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const appData = {
+            rules: {
+                id: 'rules', icon: 'fa-clipboard-list',
+                title: { it: "Regole", en: "Rules" },
+                intro: { it: "Per una convivenza serena.", en: "For a peaceful stay." },
+                content: {
+                    it: `<strong>Benvenuti a L'ARCA DI NOÈ</strong><br>Siamo felicissimi di avervi a bordo. Vi chiediamo gentilmente di rispettare queste semplici regole:<br><br>
+                         <strong>1. Arrivo e Partenza</strong><br>• Check-in: dalle 15:00 alle 21:00.<br>• Check-out: entro le 10:00.<br>• Chiavi: lasciatele sul tavolo o consegnatele a noi. La perdita comporta una penale di 20€.<br><br>
+                         <strong>2. Rispetto e Quiete</strong><br>• Silenzio: rispettate il riposo dalle 22:00 alle 08:00 e dalle 14:00 alle 16:00.<br>• No feste o ospiti extra non registrati.<br><br>
+                         <strong>3. Sicurezza e Pulizia</strong><br>• Fumo: 100% non fumatori all'interno. Solo sul terrazzino.<br>• Cibo: evitate pasti caldi in camera.<br>• Porte: chiudete la stanza, ma non date le mandate alla porta principale.<br><br>
+                         <strong>4. Sostenibilità</strong><br>• Energia: spegnete luci, TV e aria condizionata quando uscite.<br>• Rifiuti: penseremo noi a differenziarli.<br>• Asciugamani: cambi ogni 3 giorni. Cambio extra: 10€.<br><br>
+                         <strong>5. Animali</strong><br>• Benvenuti! Non farli salire sui letti, pulire all'esterno e non lasciarli mai soli in camera.`,
+                    en: `<strong>Welcome to L'ARCA DI NOÈ</strong><br>We are happy to have you on board! Please respect these house rules:<br><br>
+                         <strong>1. Arrival & Departure</strong><br>• Check-in: 3:00 PM - 9:00 PM.<br>• Check-out: by 10:00 AM.<br>• Keys: leave on the table or hand to us. Loss fee: 20€.<br><br>
+                         <strong>2. Respect & Quiet</strong><br>• Quiet hours: 10:00 PM - 8:00 AM and 2:00 PM - 4:00 PM.<br>• No parties or unregistered guests.<br><br>
+                         <strong>3. Safety & Cleaning</strong><br>• Smoking: 100% non-smoking inside. Use the terrace only.<br>• Food: avoid hot meals in the room.<br>• Doors: lock your room, do not double-lock the main entrance.<br><br>
+                         <strong>4. Sustainability</strong><br>• Energy: turn off AC, TV and lights when leaving.<br>• Waste: we handle the recycling for you.<br>• Towels: changed every 3 days. Extra change: 10€.<br><br>
+                         <strong>5. Pets</strong><br>• Welcome! Not allowed on beds, clean up outside and never leave them alone in the room.`
+                }
+            },
+            maps: {
+                id: 'maps', icon: 'fa-location-arrow',
+                title: { it: "Mappa", en: "Map" },
+                intro: { it: "La nostra posizione esatta.", en: "Our exact location." },
+                content: {
+                    it: "Ci troviamo in <strong>Via Atigliana, 19</strong>. In pochi minuti a piedi potrete raggiungere il centro storico, la stazione e il porto. Ecco la nostra posizione esatta:",
+                    en: "We are located at <strong>Via Atigliana, 19</strong>. In just a few minutes walk you can reach the historic center, the station and the port. Here is our exact location:"
+                },
+                hasMap: true
+            },
+            wifi: {
+                id: 'wifi', icon: 'fa-wifi',
+                title: { it: "Wi-Fi", en: "Wi-Fi" },
+                intro: { it: "Sempre connessi.", en: "Stay connected." },
+                content: {
+                    it: "Network: <strong>Vodafone_L'ARCA DI NOE'</strong><br>Password: <strong>NOE-2026</strong>",
+                    en: "Network: <strong>Vodafone_L'ARCA DI NOE'</strong><br>Password: <strong>NOE-2026</strong>"
+                },
+                hasQR: true
+            },
+            check: {
+                id: 'check', icon: 'fa-key',
+                title: { it: "Check", en: "Check" },
+                intro: { it: "Arrivi e partenze.", en: "Arrival and departure." },
+                content: {
+                    it: "• <strong>Check-in:</strong> 15:00 - 21:00<br>• <strong>Check-out:</strong> entro le 10:00<br><br>Lasciate le chiavi sul tavolo o consegnatele a Noè o Maria.",
+                    en: "• <strong>Check-in:</strong> 3:00 PM - 9:00 PM<br>• <strong>Check-out:</strong> by 10:00 AM<br><br>Please leave keys on the table or hand them to Noè or Maria."
+                }
+            },
+            parking: {
+                id: 'parking', icon: 'fa-car',
+                title: { it: "Auto", en: "Auto" },
+                intro: { it: "Informazioni parcheggio.", en: "Parking information." },
+                content: {
+                    it: `Per il vostro veicolo o per esplorare Sorrento e la Costiera in totale libertà, vi consigliamo i servizi professionali di:<br><br>
+                         <strong>SORRENTO PARKING.COM</strong><br>
+                         • Parcheggio sicuro e coperto.<br>
+                         • Noleggio Auto, Scooter e Bici.<br><br>
+                         <a href="https://sorrentoparking.com" target="_blank" class="partner-link"><i class="fas fa-external-link-alt mr-2"></i> Visita il sito web</a>`,
+                    en: `For your vehicle or to explore Sorrento and the Coast with freedom, we recommend the professional services of:<br><br>
+                         <strong>SORRENTO PARKING.COM</strong><br>
+                         • Secure and covered parking.<br>
+                         • Car, Scooter and Bike Rental.<br><br>
+                         <a href="https://sorrentoparking.com" target="_blank" class="partner-link"><i class="fas fa-external-link-alt mr-2"></i> Visit website</a>`
+                }
+            },
+            beaches: {
+                id: 'beaches', icon: 'fa-umbrella-beach',
+                title: { it: "Spiagge", en: "Beaches" },
+                intro: { it: "I posti più belli dove fare il bagno.", en: "The best places to swim." },
+                content: {
+                    it: `1. <strong>Leonelli's Beach:</strong> Nel centro di Sorrento. <a href="https://www.google.com/maps/search/?api=1&query=Leonelli's+Beach+Sorrento" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Mappa</a><br><br>
+                         2. <strong>Puolo:</strong> Spiaggia amata dai locali. <a href="https://www.google.com/maps/search/?api=1&query=Spiaggia+di+Puolo" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Mappa</a><br><br>
+                         3. <strong>Nerano:</strong> Acqua cristallina a Marina del Cantone. <a href="https://www.google.com/maps/search/?api=1&query=Marina+del+Cantone+Nerano" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Mappa</a><br><br>
+                         4. <strong>Positano:</strong> La perla della Costiera. <a href="https://www.google.com/maps/search/?api=1&query=Spiaggia+Grande+Positano" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Mappa</a><br><br>
+                         5. <strong>Baia di Ieranto:</strong> Riserva naturale incontaminata. <a href="https://www.google.com/maps/search/?api=1&query=Baia+di+Ieranto" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Mappa</a>`,
+                    en: `1. <strong>Leonelli's Beach:</strong> In the heart of Sorrento. <a href="https://www.google.com/maps/search/?api=1&query=Leonelli's+Beach+Sorrento" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Map</a><br><br>
+                         2. <strong>Puolo:</strong> A favorite local beach. <a href="https://www.google.com/maps/search/?api=1&query=Spiaggia+di+Puolo" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Map</a><br><br>
+                         3. <strong>Nerano:</strong> Crystal clear water at Marina del Cantone. <a href="https://www.google.com/maps/search/?api=1&query=Marina+del+Cantone+Nerano" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Map</a><br><br>
+                         4. <strong>Positano:</strong> The pearl of the Amalfi Coast. <a href="https://www.google.com/maps/search/?api=1&query=Spiaggia+Grande+Positano" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Map</a><br><br>
+                         5. <strong>Baia di Ieranto:</strong> Pristine nature reserve. <a href="https://www.google.com/maps/search/?api=1&query=Baia+di+Ieranto" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Map</a>`
+                }
+            },
+            excursions: {
+                id: 'excursions', icon: 'fa-compass',
+                title: { it: "Esperienze", en: "Experiences" },
+                intro: { it: "Vivi la Costiera con i nostri partner!", en: "Live the Coast with our partners!" },
+                content: {
+                    it: `<div class="text-center">
+                         <p class="mb-2 italic">Se vuoi un trasferimento privato (Amalfi, Positano, Pompei, Napoli) da e per aeroporto, utilizza il nostro contatto privato:</p>
+                         <strong class="text-xl block mb-2 text-stone-900">Marco</strong>
+                         <a href="https://wa.me/393343616238" target="_blank" class="whatsapp-partner-link"><i class="fab fa-whatsapp mr-2"></i> Chat con Marco</a>
+                         <hr class="border-stone-100 my-8">
+                         <p class="mb-4">Dalle stradine di Napoli all'incantevole Costiera Amalfitana, ogni tour è un viaggio tra cultura, meraviglia e vera passione italiana. Capri, Sorrento, Pompei e molto altro…</p>
+                         <strong class="text-3xl block mb-4 text-amber-800">Iamme Ia!</strong>
+                         <a href="https://iammeia.com/" target="_blank" class="partner-link"><i class="fas fa-ship mr-2"></i> Scopri i Tour</a>
+                         </div>`,
+                    en: `<div class="text-center">
+                         <p class="mb-2 italic">For a private transfer (Amalfi, Positano, Pompeii, Naples) to and from the airport, please use our private contact:</p>
+                         <strong class="text-lg block mb-2 text-stone-900">Marco</strong>
+                         <a href="https://wa.me/393343616238" target="_blank" class="whatsapp-partner-link"><i class="fab fa-whatsapp mr-2"></i> Chat with Marco</a>
+                         <hr class="border-stone-100 my-8">
+                         <p class="mb-4">From the alleys of Naples to the enchanting Amalfi Coast, every tour is a journey through culture, wonder, and true Italian passion. Capri, Sorrento, Pompeii and much more…</p>
+                         <strong class="text-3xl block mb-4 text-amber-800">Iamme Ia!</strong>
+                         <a href="https://iammeia.com/" target="_blank" class="partner-link"><i class="fas fa-ship mr-2"></i> Explore Tours</a>
+                         </div>`
+                }
+            },
+            appliances: {
+                id: 'appliances', icon: 'fa-plug-circle-bolt',
+                title: { it: "Casa", en: "Home" },
+                intro: { it: "Guida agli elettrodomestici.", en: "Appliances guide." },
+                content: {
+                    it: `<strong>Macchina del Caffè</strong><br>Per il tuo caffè perfetto. <a href="https://dam.groupeseb.com/m/58ed39bca1ffb164/original/8080017463-QSG.pdf?timestamp=20250312055111" target="_blank" class="map-link"><i class="fas fa-file-pdf"></i> Guida Rapida</a><br><br>
+                         <hr class="border-stone-100 my-4">
+                         <strong>Cassaforte (Mod. EA20H)</strong><br><br>
+                         • <strong>Memorizzare il codice:</strong> Premi il tasto rosso sul retro della porta. Si accenderà la luce gialla. Inserisci un codice (da 3 a 8 cifre) e premi <strong>B</strong>. Un beep confermerà il salvataggio.<br><br>
+                         • <strong>Per chiudere:</strong> Digita il tuo codice, premi <strong>B</strong> e ruota la manopola.<br><br>
+                         • <strong>Per aprire:</strong> Digita il tuo codice, premi <strong>B</strong> e ruota la manopola.`,
+                    en: `<strong>Coffee Machine</strong><br>For your perfect coffee morning. <a href="https://dam.groupeseb.com/m/58ed39bca1ffb164/original/8080017463-QSG.pdf?timestamp=20250312055111" target="_blank" class="map-link"><i class="fas fa-file-pdf"></i> Quick Guide</a><br><br>
+                         <hr class="border-stone-100 my-4">
+                         <strong>Hotel Safe (Mod. EA20H)</strong><br><br>
+                         • <strong>How to set the code:</strong> Press the red button behind the door. The yellow light turns on. Enter your code (3 to 8 digits) and press <strong>B</strong>. A beep confirms the code is set.<br><br>
+                         • <strong>To close:</strong> Enter your code, press <strong>B</strong> and turn the knob.<br><br>
+                         • <strong>To open:</strong> Enter your code, press <strong>B</strong> and turn the knob.`
+                }
+            },
+            food: {
+                id: 'food', icon: 'fa-utensils',
+                title: { it: "Cena", en: "Dining" },
+                intro: { it: "Consigli gastronomici.", en: "Dining tips." },
+                content: {
+                    it: `1. <strong>Da Franco:</strong> Pizza leggendaria. <a href="https://www.google.com/maps/search/?api=1&query=Pizzeria+Da+Franco+Sorrento" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Mappa</a><br><br>
+                         2. <strong>La Cantinaccia del Popolo:</strong> Cucina tipica. <a href="https://www.google.com/maps/search/?api=1&query=La+Cantinaccia+del+Popolo+Sorrento" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Mappa</a><br><br>
+                         3. <strong>Bagni Delfino:</strong> Pesce fresco vista mare. <a href="https://www.google.com/maps/search/?api=1&query=Ristorante+Bagni+Delfino+Sorrento" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Mappa</a><br><br>
+                         4. <strong>Il Buco:</strong> Cucina stellata. <a href="https://www.google.com/maps/search/?api=1&query=Il+Buco+Sorrento" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Mappa</a><br><br>
+                         5. <strong>Bistrò:</strong> A due passi da qui. <a href="https://www.google.com/maps/search/?api=1&query=Bistrò+Sorrento+Via+Atigliana" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Mappa</a>`,
+                    en: `1. <strong>Da Franco:</strong> Legendary Pizza. <a href="https://www.google.com/maps/search/?api=1&query=Pizzeria+Da+Franco+Sorrento" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Map</a><br><br>
+                         2. <strong>La Cantinaccia del Popolo:</strong> Local food. <a href="https://www.google.com/maps/search/?api=1&query=La+Cantinaccia+del+Popolo+Sorrento" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Map</a><br><br>
+                         3. <strong>Bagni Delfino:</strong> Fresh seafood. <a href="https://www.google.com/maps/search/?api=1&query=Ristorante+Bagni+Delfino+Sorrento" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Map</a><br><br>
+                         4. <strong>Il Buco:</strong> Michelin-starred. <a href="https://www.google.com/maps/search/?api=1&query=Il+Buco+Sorrento" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Map</a><br><br>
+                         5. <strong>Bistrò:</strong> A few steps away. <a href="https://www.google.com/maps/search/?api=1&query=Bistrò+Sorrento+Via+Atigliana" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Map</a>`
+                }
+            },
+            shopping: {
+                id: 'shopping', icon: 'fa-shopping-cart',
+                title: { it: "Shop", en: "Shop" },
+                intro: { it: "Consigli per i vostri acquisti.", en: "Shopping recommendations." },
+                content: {
+                    it: `1. <strong>Supermercato Pollio:</strong> Spesa quotidiana. <a href="https://www.google.com/maps/search/?api=1&query=Supermercato+Pollio+Sorrento" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Mappa</a><br><br>
+                         2. <strong>Bar Fauno:</strong> Storico bar in Piazza Tasso. <a href="https://www.google.com/maps/search/?api=1&query=Bar+Fauno+Sorrento" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Mappa</a><br><br>
+                         3. <strong>Negozi Corso Italia:</strong> La via principale dello shopping. <a href="https://www.google.com/maps/search/?api=1&query=Corso+Italia+Sorrento" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Mappa</a><br><br>
+                         4. <strong>I Giardini di Cataldo:</strong> Eccellenza del Limoncello artigianale. <a href="https://www.google.com/maps/search/?api=1&query=I+Giardini+di+Cataldo+Sorrento" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Mappa</a><br><br>
+                         5. <strong>Sandali Siniscalchi:</strong> Tipici sandali sorrentini fatti a mano. <a href="https://www.google.com/maps/search/?api=1&query=Sandali+Siniscalchi+Sorrento" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Mappa</a><br><br>
+                         6. <strong>Intarsio Sorrentino:</strong> Botteghe d'arte del legno nel centro storico. <a href="https://www.google.com/maps/search/?api=1&query=Mastro+Giuseppe+Sorrento+Intarsio" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Mappa</a>`,
+                    en: `1. <strong>Pollio Supermarket:</strong> For your groceries. <a href="https://www.google.com/maps/search/?api=1&query=Supermercato+Pollio+Sorrento" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Map</a><br><br>
+                         2. <strong>Bar Fauno:</strong> Iconic bar in Piazza Tasso. <a href="https://www.google.com/maps/search/?api=1&query=Bar+Fauno+Sorrento" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Map</a><br><br>
+                         3. <strong>Corso Italia Shops:</strong> The main shopping street. <a href="https://www.google.com/maps/search/?api=1&query=Corso+Italia+Sorrento" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Map</a><br><br>
+                         4. <strong>I Giardini di Cataldo:</strong> Famous artisanal Limoncello. <a href="https://www.google.com/maps/search/?api=1&query=I+Giardini+di+Cataldo+Sorrento" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Map</a><br><br>
+                         5. <strong>Sandali Siniscalchi:</strong> Traditional handmade Sorrento sandals. <a href="https://www.google.com/maps/search/?api=1&query=Sandali+Siniscalchi+Sorrento" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Map</a><br><br>
+                         6. <strong>Wood Marquetry:</strong> Master artisan inlay shops in the old town. <a href="https://www.google.com/maps/search/?api=1&query=Mastro+Giuseppe+Sorrento+Intarsio" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Map</a>`
+                }
+            },
+            transport: {
+                id: 'transport', icon: 'fa-bus',
+                title: { it: "Muoversi", en: "Transport" },
+                intro: { it: "Muoversi a Sorrento.", en: "Getting around." },
+                content: {
+                    it: `1. <strong>Treni EAV:</strong> Per Napoli, Pompei ed Ercolano. <a href="https://www.eavsrl.it/web/orari-linee-ferroviarie" target="_blank" class="map-link"><i class="fas fa-external-link-alt"></i> Orari</a><br><br>
+                         2. <strong>Bus SITA:</strong> Per Positano, Amalfi e Ravello. <a href="https://www.sitasudtrasporti.it/orari" target="_blank" class="map-link"><i class="fas fa-external-link-alt"></i> Orari</a><br><br>
+                         3. <strong>Traghetti:</strong> Per Capri, Ischia e Napoli (Porto). <a href="https://www.alilauro.it/" target="_blank" class="map-link"><i class="fas fa-ship"></i> Traghetti</a>`,
+                    en: `1. <strong>EAV Trains:</strong> To Naples, Pompeii, and Herculaneum. <a href="https://www.eavsrl.it/web/orari-linee-ferroviarie" target="_blank" class="map-link"><i class="fas fa-external-link-alt"></i> Schedule</a><br><br>
+                         2. <strong>SITA Bus:</strong> To Positano, Amalfi, and Ravello. <a href="https://www.sitasudtrasporti.it/orari" target="_blank" class="map-link"><i class="fas fa-external-link-alt"></i> Schedule</a><br><br>
+                         3. <strong>Ferries:</strong> To Capri, Ischia, and Naples (Port). <a href="https://www.alilauro.it/" target="_blank" class="map-link"><i class="fas fa-ship"></i> Ferries</a>`
+                }
+            },
+            emergency: {
+                id: 'emergency', icon: 'fa-phone-alt',
+                title: { it: "SOS", en: "SOS" },
+                intro: { it: "Sempre disponibili.", en: "Always available." },
+                content: {
+                    it: `<strong>Maria</strong> <a href="https://wa.me/393332012216" target="_blank" class="whatsapp-btn"><i class="fab fa-whatsapp"></i> Chat</a><br><br>
+                         <strong>Noè</strong> <a href="https://wa.me/393357417477" target="_blank" class="whatsapp-btn"><i class="fab fa-whatsapp"></i> Chat</a><br><br>
+                         <strong>Emergenza Medica</strong> <a href="tel:118" class="map-link">Chiama 118</a><br><br>
+                         <strong>Taxi Service</strong> <a href="https://wa.me/390818782204" target="_blank" class="whatsapp-btn"><i class="fab fa-whatsapp"></i> Chat</a> <a href="https://www.google.com/maps/search/?api=1&query=Taxi+Sorrento+Piazza+Tasso" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Mappa</a>`,
+                    en: `<strong>Maria</strong> <a href="https://wa.me/393332012216" target="_blank" class="whatsapp-btn"><i class="fab fa-whatsapp"></i> Chat</a><br><br>
+                         <strong>Noè</strong> <a href="https://wa.me/393357417477" target="_blank" class="whatsapp-btn"><i class="fab fa-whatsapp"></i> Chat</a><br><br>
+                         <strong>Medical Emergency</strong> <a href="tel:118" class="map-link">Call 118</a><br><br>
+                         <strong>Taxi Service</strong> <a href="https://wa.me/390818782204" target="_blank" class="whatsapp-btn"><i class="fab fa-whatsapp"></i> Chat</a> <a href="https://www.google.com/maps/search/?api=1&query=Taxi+Sorrento+Piazza+Tasso" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Map</a>`
+                }
+            }
+        };
+
+        let currentLang = 'it';
+        let isMusicPlaying = false;
+
+        function initApp() {
+            renderDashboard();
+            updateUIText();
+            
+            document.getElementById('lang-toggle').onclick = () => {
+                currentLang = currentLang === 'it' ? 'en' : 'it';
+                updateUIText();
+                renderDashboard();
+                if(!document.getElementById('detail-view').classList.contains('hidden-view')) {
+                    openDetail(document.getElementById('detail-view').dataset.activeId);
+                }
+            };
+
+            const audio = document.getElementById('bg-music');
+            const musicToggle = document.getElementById('music-toggle');
+            const musicIcon = document.getElementById('music-icon');
+
+            musicToggle.onclick = () => {
+                if (isMusicPlaying) {
+                    audio.pause();
+                    musicIcon.className = "fas fa-music text-stone-900";
+                    musicToggle.classList.remove('music-active');
+                } else {
+                    audio.play().catch(e => {
+                        console.log("Errore riproduzione o interazione necessaria");
+                    });
+                    musicIcon.className = "fas fa-volume-up text-amber-800";
+                    musicToggle.classList.add('music-active');
+                }
+                isMusicPlaying = !isMusicPlaying;
+            };
+
+            document.getElementById('back-btn').onclick = closeDetail;
+        }
+
+        function renderDashboard() {
+            const grid = document.getElementById('menu-grid');
+            grid.innerHTML = '';
+            Object.values(appData).forEach(item => {
+                const card = document.createElement('button');
+                card.className = "menu-card p-3 rounded-2xl flex flex-col items-center justify-center gap-1.5 shadow-sm";
+                card.onclick = () => openDetail(item.id);
+                card.innerHTML = `
+                    <div class="text-amber-800 text-xl"><i class="fas ${item.icon}"></i></div>
+                    <span class="text-[9px] font-black uppercase tracking-tighter text-stone-900 text-center leading-none">${item.title[currentLang]}</span>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function updateUIText() {
+            document.getElementById('lang-text').textContent = currentLang === 'it' ? "ENGLISH" : "ITALIANO";
+            document.getElementById('ui-back').textContent = currentLang === 'it' ? "Indietro" : "Back";
+        }
+
+        function openDetail(id) {
+            const data = appData[id];
+            const detailView = document.getElementById('detail-view');
+            detailView.dataset.activeId = id;
+            document.getElementById('detail-title').textContent = data.title[currentLang];
+            document.getElementById('detail-icon').innerHTML = `<i class="fas ${data.icon}"></i>`;
+            document.getElementById('section-intro').textContent = data.intro[currentLang];
+            document.getElementById('detail-content').innerHTML = data.content[currentLang];
+
+            const mapContainer = document.getElementById('map-container');
+            if(data.hasMap) mapContainer.classList.remove('hidden');
+            else mapContainer.classList.add('hidden');
+
+            const qr = document.getElementById('qr-container');
+            if(data.hasQR) qr.classList.remove('hidden');
+            else qr.classList.add('hidden');
+
+            document.getElementById('dashboard-view').classList.add('hidden-view');
+            detailView.classList.remove('hidden-view');
+            detailView.classList.add('active-view');
+        }
+
+        function closeDetail() {
+            document.getElementById('detail-view').classList.remove('active-view');
+            document.getElementById('detail-view').classList.add('hidden-view');
+            document.getElementById('dashboard-view').classList.remove('hidden-view');
+            document.getElementById('dashboard-view').classList.add('active-view');
+        }
+
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
