@@ -382,10 +382,10 @@
                          2. <strong>Corso Italia</strong>: the main shopping street. <a href="https://www.google.com/maps/search/?api=1&query=Corso+Italia+Sorrento" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Map</a><br><br>
                          3. <strong>I Giardini di Cataldo</strong>: artisanal Limoncello. <a href="https://www.google.com/maps/search/?api=1&query=I+Giardini+di+Cataldo+Sorrento" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Map</a><br><br>
                          4. <strong>Sandali Siniscalchi</strong>: handmade sandals. <a href="https://www.google.com/maps/search/?api=1&query=Sandali+Siniscalchi+Sorrento" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Map</a><br><br>
-                         5. <strong>Wood Marquetry</strong>: historic artisan shops. <a href="https://www.google.com/maps/search/?api=1&query=Mastro+Giuseppe+Sorrento+Intarsio" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Map</a><br><br>
-                         6. <strong>Giusy Perfumery</strong>: cosmetics and scents. <a href="https://www.google.com/maps/search/?api=1&query=Profumeria+Giusy+Sorrento" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Map</a><br><br>
-                         7. <strong>Artistic Ceramics</strong>: hand-painted local art. <a href="https://www.google.com/maps/search/?api=1&query=Ceramiche+Sorrento+centro+storico" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Map</a><br><br>
-                         8. <strong>Bar Fauno</strong>: iconic Piazza Tasso spot. <a href="https://www.google.com/maps/search/?api=1&query=Bar+Fauno+Sorrento" target="_blank" class="map-link"><i class="fas fa-map-marker-alt"></i> Map</a>`
+                         5. <strong>Wood Marquetry</strong>: historic artisan shops. <a href="https://www.google.com/maps/search/?api=1&query=Mastro+Giuseppe+Sorrento+Intarsio" target=\"_blank\" class=\"map-link\"><i class=\"fas fa-map-marker-alt\"></i> Map</a><br><br>
+                         6. <strong>Giusy Perfumery</strong>: cosmetics and scents. <a href=\"https://www.google.com/maps/search/?api=1&query=Profumeria+Giusy+Sorrento\" target=\"_blank\" class=\"map-link\"><i class=\"fas fa-map-marker-alt\"></i> Map</a><br><br>
+                         7. <strong>Artistic Ceramics</strong>: hand-painted local art. <a href=\"https://www.google.com/maps/search/?api=1&query=Ceramiche+Sorrento+centro+storico\" target=\"_blank\" class=\"map-link\"><i class=\"fas fa-map-marker-alt\"></i> Map</a><br><br>
+                         8. <strong>Bar Fauno</strong>: iconic Piazza Tasso spot. <a href=\"https://www.google.com/maps/search/?api=1&query=Bar+Fauno+Sorrento\" target=\"_blank\" class=\"map-link\"><i class=\"fas fa-map-marker-alt\"></i> Map</a>`
                 }
             },
             transport: {
@@ -480,6 +480,10 @@
             renderDashboard();
             updateUIText();
             
+            // Gestione Volume Musica (0.0 a 1.0)
+            const audio = document.getElementById('bg-music');
+            audio.volume = 0.2; // Impostato al 20% per sottofondo gradevole
+
             document.getElementById('lang-toggle').onclick = () => {
                 currentLang = currentLang === 'it' ? 'en' : 'it';
                 updateUIText();
@@ -489,7 +493,6 @@
                 }
             };
 
-            const audio = document.getElementById('bg-music');
             const musicToggle = document.getElementById('music-toggle');
             const musicIcon = document.getElementById('music-icon');
 
